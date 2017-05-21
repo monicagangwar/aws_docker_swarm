@@ -15,7 +15,7 @@ if [ "$tfstate_bucket" = "" ]; then
   cd $cur_dir
 fi
 
-dirs=("global" "nodes")
+dirs=("global" "nodes" "vpc")
 
 for dir in "${dirs[@]}"
 do
