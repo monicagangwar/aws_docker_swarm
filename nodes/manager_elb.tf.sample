@@ -1,0 +1,61 @@
+resource "aws_elb" "manager_elb" {
+  name            = "manager"
+  subnets         = ["${data.terraform_remote_state.vpc.manager_subnet_ids}", "${data.terraform_remote_state.vpc.public_subnet_id}"]
+  security_groups = ["${aws_security_group.manager_elb_security_group.id}"]
+
+  listener {
+    instance_port     = 2375
+    instance_protocol = "http"
+    lb_port           = 2375
+    lb_protocol       = "http"
+  }
+  listener {
+    instance_port     = 2375
+    instance_protocol = "http"
+    lb_port           = 2375
+    lb_protocol       = "http"
+  }
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "HTTP:80/"
+    interval            = 30
+  }
+
+  instances = ["${aws_instance.manager.*.id}"]
+
+  tags {
+    Name = "manager_elb"
+  }
+}
+
+resource "aws_security_group" "manager_elb_security_group" {
+  name        = "manager_elb"
+  description = "Security group for ELB"
+  vpc_id      = "${data.terraform_remote_state.vpc.vpc_id}"
+
+  # Port open on ingress is open on egress as well. So no need to define it again
+  # Need to open port 80 to the world, so that the NGINX server can redirect users automatically
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "manager_elb_security_group"
+  }
+}
+
+output "manager_elb_dns" {
+  value = "${aws_elb.manager_elb.dns_name}"
+}

@@ -1,11 +1,11 @@
 resource "aws_instance" "manager" {
-  count = 1
-  ami             = "${lookup(var.amis, var.region)}"
-  instance_type   = "t2.micro"
-  subnet_id       = "${element(data.terraform_remote_state.vpc.manager_subnet_ids, count.index)}"
-  key_name        = "${data.terraform_remote_state.global.ssh_key}"
+  count                  = 1
+  ami                    = "${lookup(var.amis, var.region)}"
+  instance_type          = "t2.micro"
+  subnet_id              = "${element(data.terraform_remote_state.vpc.manager_subnet_ids, count.index)}"
+  key_name               = "${data.terraform_remote_state.global.ssh_key}"
   vpc_security_group_ids = ["${aws_security_group.manager.id}"]
-  user_data       = "${data.template_cloudinit_config.manager.rendered}"
+  user_data              = "${data.template_cloudinit_config.manager.rendered}"
 
   tags {
     Name = "manager"
@@ -15,7 +15,7 @@ resource "aws_instance" "manager" {
 resource aws_security_group "manager" {
   name        = "manager"
   description = "Security group for docker manager node"
-  vpc_id = "${data.terraform_remote_state.vpc.vpc_id}"
+  vpc_id      = "${data.terraform_remote_state.vpc.vpc_id}"
 
   ingress = {
     from_port   = 0

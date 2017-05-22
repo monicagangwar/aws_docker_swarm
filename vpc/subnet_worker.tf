@@ -8,8 +8,9 @@ resource "aws_subnet" "worker_subnet" {
     Name = "worker_subnet_${count.index}"
   }
 }
+
 resource "aws_route_table" "worker_route" {
-  count = "${var.worker_count}"
+  count  = "${var.worker_count}"
   vpc_id = "${aws_vpc.vpc.id}"
 
   route {
@@ -17,6 +18,7 @@ resource "aws_route_table" "worker_route" {
     instance_id = "${aws_instance.nat.id}"
   }
 }
+
 resource "aws_route_table_association" "worker_route_table_association" {
   count          = "${var.worker_count}"
   subnet_id      = "${element(aws_subnet.worker_subnet.*.id, count.index)}"
