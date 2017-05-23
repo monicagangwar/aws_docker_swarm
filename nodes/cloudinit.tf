@@ -21,12 +21,19 @@ data "template_cloudinit_config" "manager" {
     content      = "${file("cloud-config/manager.cfg")}"
   }
 }
+data "template_file" "swarm_token" {
+  template = "${file("cloud-config/swarm_token.sh")}"
+
+  vars {
+    manager     = "${aws_instance.manager.public_ip}"
+  }
+}
 
 data "template_file" "worker" {
   template = "${file("cloud-config/worker.cfg")}"
 
   vars {
-    manager = "${aws_instance.manager.public_ip}"
+    swarm_token = "${base64encode("${data.template_file.swarm_token.rendered}")}"
   }
 }
 

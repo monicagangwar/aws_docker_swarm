@@ -1,6 +1,7 @@
 # AWS DOCKER SWARM SETUP
 
-AWS Setup for launching Docker Swarm Cluster on 3 nodes (1 master, 2 workers)
+AWS Setup for launching Docker Swarm Cluster on 3 nodes (1 master, 2 workers)  
+[Quick Demo](https://vimeo.com/218763304)
 
 
 ### Infrastructure
