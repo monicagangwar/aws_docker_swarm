@@ -1,11 +1,13 @@
 resource "aws_instance" "manager" {
-  count                  = 1
-  ami                    = "${lookup(var.amis, var.region)}"
-  instance_type          = "t2.micro"
-  subnet_id              = "${element(data.terraform_remote_state.vpc.manager_subnet_ids, count.index)}"
-  key_name               = "${data.terraform_remote_state.global.ssh_key}"
-  vpc_security_group_ids = ["${aws_security_group.manager.id}"]
-  user_data              = "${data.template_cloudinit_config.manager.rendered}"
+  count                       = 1
+  ami                         = "${lookup(var.amis, var.region)}"
+  instance_type               = "t2.micro"
+  subnet_id                   = "${element(data.terraform_remote_state.vpc.manager_subnet_ids, count.index)}"
+  key_name                    = "${data.terraform_remote_state.global.ssh_key}"
+  vpc_security_group_ids      = ["${aws_security_group.manager.id}"]
+  associate_public_ip_address = true
+  source_dest_check           = false
+  user_data                   = "${data.template_cloudinit_config.manager.rendered}"
 
   tags {
     Name = "manager"
@@ -33,5 +35,5 @@ resource aws_security_group "manager" {
 }
 
 output "manager_ip" {
-  value = "${aws_instance.manager.private_ip}"
+  value = "${aws_instance.manager.public_ip}"
 }

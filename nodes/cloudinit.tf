@@ -26,7 +26,7 @@ data "template_file" "worker" {
   template = "${file("cloud-config/worker.cfg")}"
 
   vars {
-    manager = "${aws_instance.manager.private_ip}"
+    manager = "${aws_instance.manager.public_ip}"
   }
 }
 

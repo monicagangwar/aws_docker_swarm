@@ -12,7 +12,7 @@ resource "aws_subnet" "manager_subnet" {
 resource "aws_route_table_association" "manager_route_table_association" {
   count          = "${var.manager_count}"
   subnet_id      = "${element(aws_subnet.manager_subnet.*.id, count.index)}"
-  route_table_id = "${aws_route_table.private_route.id}"
+  route_table_id = "${aws_route_table.public_route.id}"
 }
 
 output "manager_subnet_ids" {
