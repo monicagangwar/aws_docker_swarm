@@ -11,6 +11,17 @@ data "template_cloudinit_config" "controller" {
   }
 }
 
+data "template_cloudinit_config" "cms" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = "${file("cloud-config/cms.cfg")}"
+  }
+}
+
 data "template_cloudinit_config" "manager" {
   gzip          = false
   base64_encode = false
@@ -21,11 +32,12 @@ data "template_cloudinit_config" "manager" {
     content      = "${file("cloud-config/manager.cfg")}"
   }
 }
+
 data "template_file" "swarm_token" {
   template = "${file("cloud-config/swarm_token.sh")}"
 
   vars {
-    manager     = "${aws_instance.manager.public_ip}"
+    manager = "${aws_instance.manager.public_ip}"
   }
 }
 
